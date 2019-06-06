@@ -24,6 +24,10 @@ entity ucontrol is
 		   enderecoB		: out unsigned(3 downto 0);					-- B eh FONTE
 		   chosenRegister	: out unsigned(3 downto 0);				
 		   jump_adress 		: out unsigned(7 downto 0);
+		   -- o que eu mudei
+		   branch_adress	: out unsigned(3 downto 0);
+		   branch_enable	: out std_logic;
+		   ------
 		   isAddress		: out std_logic
 	);
 end entity;
@@ -66,6 +70,27 @@ architecture a_ucontrol of ucontrol is
 				 "00000000";	
 				 -- recolhe o opcode, 8 bits mais significativos
 	instrucao <= instrucao_s;
+	
+	------ o que eu mudei 
+	branch_enable <= '1' when instrucao_s="00100111" else
+					 '0';
+					 
+	branch_adress <= commandFromROM(3 downto 0) when instrucao_s="00100111" else
+					 "0000";
+	
+	-- complemento de dois do branch_adress
+	-- primeiro eu inverto todos os bits
+	
+	notAdress = not(branch_adress);
+	complemento = notAdress + "00000001";
+	
+	-- precisamos jogar esse complemento 1 para a ULA, somando com o valor do endereço atual do PC
+	-- verificar se o PC já foi atualizado para 18 ou ainda está em 14, amiga
+	-- no processador a gente pega a saída da ULA, faz o complemento dessa mesma forma e joga na entrada do PC. 
+	-- acredito e tenho fé no bom senhor de que isso vai funcionar
+	
+	-----
+					 
 	
 	jump_enable <= '1' when instrucao_s="11011100" and outMaq = "0" else											-- se for uma instrução de jump, o jumpEnable pode ser ativado
 				   '0';

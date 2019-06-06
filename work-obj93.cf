@@ -23,9 +23,12 @@ file . "bancoReg_8.vhd" "2e256dac8ceea53b55dcd320c6da23348f775ca1" "201905241452
 file . "maquina3estados.vhd" "b381b777c11e478a4e3dc7504b0e263be940bad1" "20190524145257.880":
   entity maquina3estados at 9( 293) + 0 on 21;
   architecture a_maquina3estados of maquina3estados at 20( 524) + 0 on 22;
-file . "ula.vhd" "4909514a5622b9778aae797dfdd03b42f8743ed6" "20190524145341.283":
-  entity ula at 9( 293) + 0 on 29;
-  architecture a_ula of ula at 20( 590) + 0 on 30;
+file . "ula.vhd" "1e24a3ea0aa4fa99f7949778bb63c0e5d538d259" "20190605185251.272":
+  entity ula at 9( 304) + 0 on 47;
+  architecture a_ula of ula at 20( 601) + 0 on 48;
 file . "processador_tb.vhd" "f85947fa650209fdbdb7bba98159cb40ec1f6e0f" "20190524183334.455":
   entity processador_tb at 9( 293) + 0 on 43;
   architecture a_processador_tb of processador_tb at 16( 408) + 0 on 44;
+file . "ula_tb.vhd" "b7e3008b7bf2c320526d4e56dde8d37a92b149f8" "20190605190054.500":
+  entity ula_tb at 9( 311) + 0 on 51;
+  architecture a_ula_tb of ula_tb at 16( 411) + 0 on 52;
