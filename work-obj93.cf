@@ -1,34 +1,34 @@
 v 4
-file . "pc.vhd" "610a340935e1f9cf697aa4251896bdff59e0700e" "20190524145334.747":
-  entity pc at 9( 293) + 0 on 27;
-  architecture a_pc of pc at 22( 592) + 0 on 28;
-file . "ucontrol.vhd" "068ec8573dc11164e1ae5c5e49119ca661e4d1a5" "20190524150636.017":
-  entity ucontrol at 9( 293) + 0 on 37;
-  architecture a_ucontrol of ucontrol at 31( 1134) + 0 on 38;
-file . "maquina2estados.vhd" "aacb18bcb68ddd54723fc73b6d5d8d91e2c51a6d" "20190524145247.807":
-  entity maquina2estados at 9( 293) + 0 on 19;
-  architecture a_maquina2estados of maquina2estados at 20( 524) + 0 on 20;
-file . "reg8.vhd" "e48bcc31901fc98f51cb5440fc6bdd922e4d6040" "20190524145218.191":
-  entity reg8 at 9( 293) + 0 on 15;
-  architecture a_reg8 of reg8 at 22( 592) + 0 on 16;
-file . "processador.vhd" "1784c8fd57b6ca20239e5eadbf59938d834602fa" "20190524151001.162":
-  entity processador at 9( 293) + 0 on 41;
-  architecture a_processador of processador at 37( 1421) + 0 on 42;
-file . "rom.vhd" "b845f4fa09c44905f962a714e8c88c89b9261d52" "20190524150634.606":
-  entity rom at 9( 293) + 0 on 35;
-  architecture a_rom of rom at 20( 519) + 0 on 36;
-file . "bancoReg_8.vhd" "2e256dac8ceea53b55dcd320c6da23348f775ca1" "20190524145231.703":
-  entity bancoreg_8 at 9( 293) + 0 on 17;
-  architecture a_bancoreg_8 of bancoreg_8 at 27( 1193) + 0 on 18;
-file . "maquina3estados.vhd" "b381b777c11e478a4e3dc7504b0e263be940bad1" "20190524145257.880":
-  entity maquina3estados at 9( 293) + 0 on 21;
-  architecture a_maquina3estados of maquina3estados at 20( 524) + 0 on 22;
-file . "ula.vhd" "1e24a3ea0aa4fa99f7949778bb63c0e5d538d259" "20190605185251.272":
-  entity ula at 9( 304) + 0 on 47;
-  architecture a_ula of ula at 20( 601) + 0 on 48;
-file . "processador_tb.vhd" "f85947fa650209fdbdb7bba98159cb40ec1f6e0f" "20190524183334.455":
-  entity processador_tb at 9( 293) + 0 on 43;
-  architecture a_processador_tb of processador_tb at 16( 408) + 0 on 44;
+file . "pc.vhd" "c81e2558e02ab5e0a8f882bd43617a98eabe05fd" "20190607002716.197":
+  entity pc at 9( 304) + 0 on 71;
+  architecture a_pc of pc at 22( 603) + 0 on 72;
+file . "ucontrol.vhd" "9c0ce4e1fd2fb3a5b5c27014408f12be2fffc5f8" "20190607201533.394":
+  entity ucontrol at 9( 304) + 0 on 113;
+  architecture a_ucontrol of ucontrol at 36( 1274) + 0 on 114;
+file . "maquina2estados.vhd" "e6d7d76b9460208e5c2e4d85ad41895162538c45" "20190607002539.649":
+  entity maquina2estados at 9( 304) + 0 on 57;
+  architecture a_maquina2estados of maquina2estados at 20( 535) + 0 on 58;
+file . "reg8.vhd" "ed0efe2ad1ac9fa87f100daace5fb09c86e44818" "20190607002648.960":
+  entity reg8 at 9( 304) + 0 on 65;
+  architecture a_reg8 of reg8 at 22( 603) + 0 on 66;
+file . "processador.vhd" "553dbcbc252ae179d613a72bc391ab0be7a802e5" "20190607201550.033":
+  entity processador at 9( 304) + 0 on 115;
+  architecture a_processador of processador at 37( 1432) + 0 on 116;
+file . "rom.vhd" "0895a79e72c3b1d982ab955a0165a26e68fafaae" "20190607200912.001":
+  entity rom at 9( 304) + 0 on 111;
+  architecture a_rom of rom at 20( 530) + 0 on 112;
+file . "bancoReg_8.vhd" "a4da41aba709369fd03df04ae6651ac31b45c03b" "20190607002658.029":
+  entity bancoreg_8 at 9( 304) + 0 on 67;
+  architecture a_bancoreg_8 of bancoreg_8 at 27( 1204) + 0 on 68;
+file . "maquina3estados.vhd" "06ee1c29b9e3562485869aff11f69ee021f363b8" "20190607002736.697":
+  entity maquina3estados at 9( 304) + 0 on 75;
+  architecture a_maquina3estados of maquina3estados at 20( 535) + 0 on 76;
+file . "ula.vhd" "cb4fea089b9b9d427f4f22d41f97d2a5b618089f" "20190607200326.899":
+  entity ula at 9( 304) + 0 on 101;
+  architecture a_ula of ula at 21( 630) + 0 on 102;
+file . "processador_tb.vhd" "e861c6b65bc48c0e34f78c763457f765e749d825" "20190607200731.976":
+  entity processador_tb at 9( 304) + 0 on 109;
+  architecture a_processador_tb of processador_tb at 16( 419) + 0 on 110;
 file . "ula_tb.vhd" "b7e3008b7bf2c320526d4e56dde8d37a92b149f8" "20190605190054.500":
   entity ula_tb at 9( 311) + 0 on 51;
   architecture a_ula_tb of ula_tb at 16( 411) + 0 on 52;

@@ -51,7 +51,8 @@ architecture a_processador of processador is
 	component ULA
 		port(ent1, ent2		: in unsigned (7 downto 0);
 			 selOpcao		: in unsigned (7 downto 0);					-- operação que será realizada pela ULA, vem do Ucontrol
-			 saida			: out unsigned (7 downto 0)
+			 saida			: out unsigned (7 downto 0);
+			 Bmaior			: out std_logic
 	);
 	end component;
 	
@@ -99,7 +100,9 @@ architecture a_processador of processador is
 		   enderecoB		: out unsigned(3 downto 0);					-- B eh FONTE
 		   chosenRegister	: out unsigned(3 downto 0);				
 		   jump_adress 		: out unsigned(7 downto 0);
-		   isAddress		: out std_logic
+		   isAddress		: out std_logic;
+		   branch_delta		: out unsigned(3 downto 0);
+		   branch_enable	: out std_logic
 	);
 	end component;
 	
@@ -110,7 +113,7 @@ architecture a_processador of processador is
 	signal valorLiteral, valorSaidaUCONTROL			: unsigned(7 downto 0);					-- valor a ser armazenado no registrador escolhido, sai da ucontrol
 	signal valorInBanco								: unsigned(7 downto 0);					-- sinal que entra no banco de registradores
 	signal operacaoULA, resultULA, inFromULA		: unsigned(7 downto 0);					-- saída da ucontrol, com base no opcode e a entrada da ucontrol com resultado da ULA
-	signal j_enable, indicaEndereco					: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
+	signal j_enable, b_enable, indicaEndereco,Bmaior: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
 	signal operacaoUCONTROL							: unsigned(7 downto 0);
 	signal stateMachine3_s, outMaq3					: unsigned(1 downto 0);					-- resultado da máquina de estados de 3 estados
 	signal stateMachine2_s, outMaq2					: unsigned(1 downto 0);
@@ -118,6 +121,7 @@ architecture a_processador of processador is
 	signal comandoUCONTROL							: unsigned(15 downto 0);
 	signal dataROM_s								: unsigned(15 downto 0);				-- informação da ROM
 	signal proxEndereco_s, jumpAddres				: unsigned(7 downto 0);					-- próximo endereço, atualização do PC
+	signal branch_delta								: unsigned(3 downto 0);
 	
 	begin
 	
@@ -134,7 +138,8 @@ architecture a_processador of processador is
 	ULAObj: ULA port map( ent1 => entradaAULA,
 						  ent2 => entradaBULA,
 						  selOpcao => operacaoULA,
-					      saida => resultULA);
+					      saida => resultULA,
+						  Bmaior => Bmaior);
 								
 	romObj: rom port map( clock => clk_geral,
 						  endereco => entradaROM,
@@ -167,12 +172,15 @@ architecture a_processador of processador is
 									enderecoB => regB,
 									chosenRegister => regEscolhido,
 									jump_adress => jumpAddres,
-									isAddress => indicaEndereco); 
+									isAddress => indicaEndereco,
+									branch_enable => b_enable,
+									branch_delta => branch_delta); 
 									
 	-- CONFIGURACAO PC
-	entradaPC <= saidaPC + "00000001" when outMaq2 = "1" and j_enable = '0' else			-- so incrementa se nao tiver jump
-				 jumpAddres when outMaq2 = "1" and j_enable = '1' else						-- pula para o endereço do jump se houver
-				 saidaPC;																	-- senão, so fica na mesma instrucao
+	entradaPC <= saidaPC + "00000001" when outMaq2 = "1" and j_enable = '0' and b_enable = '0' else			-- so incrementa se nao tiver jump
+				 jumpAddres when outMaq2 = "1" and j_enable = '1' and b_enable = '0' else					-- pula para o endereço do jump se houver
+				 resultULA when j_enable = '0' and b_enable = '1' else							-- pc pula pro endereço do branch
+				 saidaPC;					--* saída da maquina em 0: mantem na mesma instrução  *		-- senão, so fica na mesma instrucao
 
 	-- CONFIGURACAO ROM
 	entradaROM <= saidaPC;																	-- ROM recebe o endereço da proxima instrucao
@@ -186,21 +194,25 @@ architecture a_processador of processador is
 	entradaBULA <= valorSaidaUCONTROL when operacaoUCONTROL = "11011011" and indicaEndereco = '0' else
 				   valorSaidaUCONTROL when operacaoUCONTROL = "11010000" else
 				   valorRegB when operacaoUCONTROL = "11011011" and indicaEndereco = '1' else					-- o valor do registrador vai para a entrada da ULA	
+				   valorRegB when operacaoUCONTROL = "00100111" else
 				   "00000000";
-	operacaoULA <= operacaoUCONTROL;																		-- opcode determina a operacao
+	operacaoULA <= "11011011" when operacaoUCONTROL = "00100111" else	-- operação de subtração quando for branch	
+					operacaoUCONTROL; 									-- opcode determina a operacao
+					
 	
 	-- VALIDA PARA A INSTRUCAO DE MOV E ADD
 	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else
 					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else --or operacaoUCONTROL = "01001110" else
 					valorRegB when operacaoUCONTROL = "01001110" or operacaoUCONTROL="11010110" else
 					"00000000";
-	escolhidoBanco <= regA when operacaoUCONTROL = "01001110" or operacaoUCONTROL = "01011110" or operacaoUCONTROL="11010110" else
-					  "0111" when operacaoUCONTROL = "11011011"  or operacaoUCONTROL = "11010000" else 
+	escolhidoBanco <= regA when operacaoUCONTROL = "01001110" or operacaoUCONTROL = "01011110" or operacaoUCONTROL="11010110" or operacaoUCONTROL = "00100111" else
+					  "0111" when operacaoUCONTROL = "11011011"  or operacaoUCONTROL = "11010000" else  
 					  "0000";
 	
 	-- CONFIGURACAO BANCO REGISTRADORES
 	regAbanco <= regA;								
-	regBbanco <= regB;
+	regBbanco <= saidaPC-1 when b_enable = '1' else
+				 regB;
 	regEscolhido <= escolhidoBanco;
 	
 	-- VALIDA PARA A INSTRUCAO DE ADD
