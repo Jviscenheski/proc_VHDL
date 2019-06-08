@@ -93,9 +93,9 @@ architecture a_ucontrol of ucontrol is
 				 -- recolhe o opcode, 8 bits mais significativos
 	instrucao <= instrucao_s;
 	
-	------ o que eu mudei 	
+	------ o que eu mudei
 	b_enable <= '1' when instrucao_s="00100111" and bmaiors = '1' else -- da branch quando chegar no comando e o acumulador ainda não for 30 (regB)
-					 '0';
+				'0';
 	branch_enable <= b_enable;
 					 
 	b_address <= commandFromROM(3 downto 0) when instrucao_s="00100111" else --endereço do registrador com o valor que vamos comparar
@@ -105,17 +105,6 @@ architecture a_ucontrol of ucontrol is
 	
 	regBranch <= "0000" & commandFromROM(7 downto 4) when instrucao_s="00100111" else
 				 "00000000";
-	
-	-- complemento de dois do branch_adress
-	-- primeiro eu inverto todos os bits
-	
-	--notAdress <= not b_address;
-	--complemento <= notAdress + "0001"; --complemento de 2?
-	
-	-- precisamos jogar esse complemento 1 para a ULA, somando com o valor do endereço atual do PC
-	-- verificar se o PC já foi atualizado para 18 ou ainda está em 14, amiga
-	-- no processador a gente pega a saída da ULA, faz o complemento dessa mesma forma e joga na entrada do PC. 
-	-- acredito e tenho fé no bom senhor de que isso vai funcionar
 	
 	-----
 					 
@@ -136,16 +125,17 @@ architecture a_ucontrol of ucontrol is
 				 
 	valor <=  "01111111" and valorIntermediario when commandFromROM(15 downto 8)="11011011" or commandFromROM(15 downto 8)="11010000" else -- ADD E SUB
 			  "00001111" and valorIntermediario when commandFromROM(15 downto 8)="01011110" else -- MOVA
-			  "00000000";			  
+			  "00000000";	 		  
 	
 	enderecoA <= commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="01001110"  else								-- terceiro grupo de 4 bits quando é um MOV
-				 commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="00100111" and b_enable='1' else			-- valor do deslocamente delta no branch
+				 --commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="00100111" and b_enable='1' else				-- valor do deslocamente delta no branch
 				 "0111" when (commandFromROM(15 downto 8)="11011011") or (commandFromROM(15 downto 8)="11010000") or (commandFromROM(15 downto 8)="01011110") or (commandFromROM(15 downto 8)="11010110") or (commandFromROM(15 downto 8)="00100111") else	-- endereço do acumulador quando é um add, porque o add só é feito no acumulador
 				 "0000";
 
 	enderecoB <= commandFromROM(3 downto 0) when commandFromROM(15 downto 8)="01001110" or commandFromROM(15  downto 8)="11010110" else				-- 4 últimos bits em caso de MOV
 				 commandFromROM(3 downto 0) when commandFromROM(15 downto 7)="110110111" or commandFromROM(15 downto 8)="11010000" else
-				 "0000";
+				 commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="00100111" else														-- reg6 com o número pra comparar e ver se faz branch
+				 "0000"; 
 				 
 	chosenRegister <= "0111" when commandFromROM(15 downto 8)="11011011" or commandFromROM(15 downto 8)="01011110" or commandFromROM(15 downto 8)="11010110" or commandFromROM(15 downto 8)="11010000" else
 					  commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="01001110"  else	-- endereço destino quando é um MOV

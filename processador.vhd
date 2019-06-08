@@ -20,6 +20,7 @@ entity processador is
 		  saidaBancoB		: out unsigned(7 downto 0);
 		  saidaULA			: out unsigned(7 downto 0);
 		  ---- pinos de teste
+		  BmaiorTeste		:out std_logic;
 		  chosenRegTESTE	: out unsigned(3 downto 0);
 		  regAUCONTROL		: out unsigned(3 downto 0);
 		  regBUCONTROL		: out unsigned(3 downto 0);
@@ -93,6 +94,7 @@ architecture a_processador of processador is
 		   stateMachine2	: in unsigned(1 downto 0);
 		   commandFromROM	: in unsigned(15 downto 0);
 		   --returnFromULA	: in unsigned(7 downto 0);
+		   
 		   jump_enable		: out std_logic;
 		   instrucao		: out unsigned(7 downto 0);					-- opcode
 		   valor			: out unsigned(7 downto 0);					-- literal que será somado ao valor de um registrador, por exemplo
@@ -113,7 +115,7 @@ architecture a_processador of processador is
 	signal valorLiteral, valorSaidaUCONTROL			: unsigned(7 downto 0);					-- valor a ser armazenado no registrador escolhido, sai da ucontrol
 	signal valorInBanco								: unsigned(7 downto 0);					-- sinal que entra no banco de registradores
 	signal operacaoULA, resultULA, inFromULA		: unsigned(7 downto 0);					-- saída da ucontrol, com base no opcode e a entrada da ucontrol com resultado da ULA
-	signal j_enable, b_enable, indicaEndereco,Bmaior: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
+	signal j_enable, b_enable, indicaEndereco,Bmaiors: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
 	signal operacaoUCONTROL							: unsigned(7 downto 0);
 	signal stateMachine3_s, outMaq3					: unsigned(1 downto 0);					-- resultado da máquina de estados de 3 estados
 	signal stateMachine2_s, outMaq2					: unsigned(1 downto 0);
@@ -122,6 +124,7 @@ architecture a_processador of processador is
 	signal dataROM_s								: unsigned(15 downto 0);				-- informação da ROM
 	signal proxEndereco_s, jumpAddres				: unsigned(7 downto 0);					-- próximo endereço, atualização do PC
 	signal branch_delta								: unsigned(3 downto 0);
+	signal endFinalBranch							: unsigned(7 downto 0);
 	
 	begin
 	
@@ -139,7 +142,7 @@ architecture a_processador of processador is
 						  ent2 => entradaBULA,
 						  selOpcao => operacaoULA,
 					      saida => resultULA,
-						  Bmaior => Bmaior);
+						  Bmaior => Bmaiors);
 								
 	romObj: rom port map( clock => clk_geral,
 						  endereco => entradaROM,
@@ -176,10 +179,13 @@ architecture a_processador of processador is
 									branch_enable => b_enable,
 									branch_delta => branch_delta); 
 									
+	
+	endFinalBranch <= ("0000" & branch_delta) + (saidaPC - "00000001");  	-- somando o descolamento delta com meu endereço atual, tenho o endereço destino do branch
+	
 	-- CONFIGURACAO PC
 	entradaPC <= saidaPC + "00000001" when outMaq2 = "1" and j_enable = '0' and b_enable = '0' else			-- so incrementa se nao tiver jump
 				 jumpAddres when outMaq2 = "1" and j_enable = '1' and b_enable = '0' else					-- pula para o endereço do jump se houver
-				 resultULA when j_enable = '0' and b_enable = '1' else							-- pc pula pro endereço do branch
+				 endFinalBranch when outMaq2 = "1" and j_enable = '0' and b_enable = '1' else							-- pc pula pro endereço do branch
 				 saidaPC;					--* saída da maquina em 0: mantem na mesma instrução  *		-- senão, so fica na mesma instrucao
 
 	-- CONFIGURACAO ROM
@@ -196,8 +202,8 @@ architecture a_processador of processador is
 				   valorRegB when operacaoUCONTROL = "11011011" and indicaEndereco = '1' else					-- o valor do registrador vai para a entrada da ULA	
 				   valorRegB when operacaoUCONTROL = "00100111" else
 				   "00000000";
-	operacaoULA <= "11011011" when operacaoUCONTROL = "00100111" else	-- operação de subtração quando for branch	
-					operacaoUCONTROL; 									-- opcode determina a operacao
+	operacaoULA <= operacaoUCONTROL; -- "11011011" when operacaoUCONTROL = "00100111" and b_enable = '1' else	-- operação de subtração quando for branch	
+					 														-- opcode determina a operacao
 					
 	
 	-- VALIDA PARA A INSTRUCAO DE MOV E ADD
@@ -211,8 +217,8 @@ architecture a_processador of processador is
 	
 	-- CONFIGURACAO BANCO REGISTRADORES
 	regAbanco <= regA;								
-	regBbanco <= saidaPC-1 when b_enable = '1' else
-				 regB;
+	regBbanco <= regB; --(saidaPC - "00000001")(3 downto 0) when b_enable = '1' else  	-- pego só 4 bits ´
+				 
 	regEscolhido <= escolhidoBanco;
 	
 	-- VALIDA PARA A INSTRUCAO DE ADD
@@ -225,6 +231,7 @@ architecture a_processador of processador is
 	proxEndereco <= saidaPC;
 	
 	-- Adicionando pinos de teste
+	BmaiorTeste <= Bmaiors;
 	chosenRegTESTE	<= escolhidoBanco;
 	regAUCONTROL	<= regA;
 	regBUCONTROL	<= regB;

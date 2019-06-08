@@ -24,6 +24,7 @@ architecture a_processador_tb of processador_tb is
 			  saidaBancoB		: out unsigned(7 downto 0);
 			  saidaULA			: out unsigned(7 downto 0);
 			  -- pinos de teste
+			  BmaiorTeste		: out std_logic;
 			  chosenRegTESTE	: out unsigned(3 downto 0);
 			  regAUCONTROL		: out unsigned(3 downto 0);
 			  regBUCONTROL		: out unsigned(3 downto 0);
@@ -38,7 +39,7 @@ architecture a_processador_tb of processador_tb is
 		);
 	end component;
 	
-	signal write_en, clk_geral, rst_grl, ehEndereco 	  													: std_logic;
+	signal write_en, clk_geral, rst_grl, ehEndereco, BmaiorTeste								: std_logic;
 	signal dataROM						  	  													: unsigned(15 downto 0);
 	signal proxEndereco, saidaBancoA, saidaBancoB, saidaULA, valorEscrito, operacaoULATESTE, entradaAULATESTE, entradaBULATESTE 	: unsigned(7 downto 0);
 	
@@ -66,7 +67,8 @@ architecture a_processador_tb of processador_tb is
 								operacaoULATESTE => operacaoULATESTE, 
 								ehEndereco => ehEndereco,
 								entradaBULATESTE => entradaBULATESTE,
-								entradaAULATESTE => entradaAULATESTE);
+								entradaAULATESTE => entradaAULATESTE,
+								BmaiorTeste => BmaiorTeste);
 								
 	process
 	begin
