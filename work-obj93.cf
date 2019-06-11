@@ -2,9 +2,9 @@ v 4
 file . "ula_tb.vhd" "b7e3008b7bf2c320526d4e56dde8d37a92b149f8" "20190605190054.500":
   entity ula_tb at 9( 311) + 0 on 51;
   architecture a_ula_tb of ula_tb at 16( 411) + 0 on 52;
-file . "processador_tb.vhd" "8d473e9d4848d05a75c2d4b2382072e08df9bf49" "20190608204745.132":
-  entity processador_tb at 9( 304) + 0 on 161;
-  architecture a_processador_tb of processador_tb at 16( 419) + 0 on 162;
+file . "processador_tb.vhd" "8c274015754066f1754a0c67a57b51513c4a4f0e" "20190611015439.514":
+  entity processador_tb at 9( 304) + 0 on 177;
+  architecture a_processador_tb of processador_tb at 16( 419) + 0 on 178;
 file . "ula.vhd" "cb4fea089b9b9d427f4f22d41f97d2a5b618089f" "20190607200326.899":
   entity ula at 9( 304) + 0 on 101;
   architecture a_ula of ula at 21( 630) + 0 on 102;
@@ -17,18 +17,18 @@ file . "bancoReg_8.vhd" "a4da41aba709369fd03df04ae6651ac31b45c03b" "201906070026
 file . "rom.vhd" "f6a7f51356128b91d07f25dea525b24df3b480c0" "20190608154559.230":
   entity rom at 9( 304) + 0 on 127;
   architecture a_rom of rom at 20( 530) + 0 on 128;
-file . "processador.vhd" "4f5bf2f755177f55f4d8694e5373e246e1265908" "20190608204335.085":
-  entity processador at 9( 304) + 0 on 153;
-  architecture a_processador of processador at 38( 1466) + 0 on 154;
+file . "processador.vhd" "6324ac36c636b5377bb49a3c71aaf9047b949263" "20190611132623.045":
+  entity processador at 9( 304) + 0 on 191;
+  architecture a_processador of processador at 41( 1594) + 0 on 192;
 file . "reg8.vhd" "ed0efe2ad1ac9fa87f100daace5fb09c86e44818" "20190607002648.960":
   entity reg8 at 9( 304) + 0 on 65;
   architecture a_reg8 of reg8 at 22( 603) + 0 on 66;
 file . "maquina2estados.vhd" "e6d7d76b9460208e5c2e4d85ad41895162538c45" "20190607002539.649":
   entity maquina2estados at 9( 304) + 0 on 57;
   architecture a_maquina2estados of maquina2estados at 20( 535) + 0 on 58;
-file . "ucontrol.vhd" "cd4a12c064ad6e6b182ae3634e89fbbb0580f8fd" "20190608204737.304":
-  entity ucontrol at 9( 304) + 0 on 159;
-  architecture a_ucontrol of ucontrol at 36( 1274) + 0 on 160;
+file . "ucontrol.vhd" "7648eceb5d5d24e4c5dd666cf34a709c7e90f4b2" "20190611132642.746":
+  entity ucontrol at 9( 304) + 0 on 193;
+  architecture a_ucontrol of ucontrol at 35( 1237) + 0 on 194;
 file . "pc.vhd" "c81e2558e02ab5e0a8f882bd43617a98eabe05fd" "20190607002716.197":
   entity pc at 9( 304) + 0 on 71;
   architecture a_pc of pc at 22( 603) + 0 on 72;

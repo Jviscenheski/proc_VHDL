@@ -24,6 +24,7 @@ architecture a_processador_tb of processador_tb is
 			  saidaBancoB		: out unsigned(7 downto 0);
 			  saidaULA			: out unsigned(7 downto 0);
 			  -- pinos de teste
+			  branch_stop		: out std_logic;
 			  BmaiorTeste		: out std_logic;
 			  chosenRegTESTE	: out unsigned(3 downto 0);
 			  regAUCONTROL		: out unsigned(3 downto 0);
@@ -35,17 +36,21 @@ architecture a_processador_tb of processador_tb is
 			  operacaoULATESTE	: out unsigned(7 downto 0);
 			  ehEndereco		: out std_logic;
 			  entradaAULATESTE	: out unsigned(7 downto 0);
-			  entradaBULATESTE	: out unsigned(7 downto 0)
+			  entradaBULATESTE	: out unsigned(7 downto 0);
+			  branch_delt 		: out unsigned(3 downto 0);
+			  endFinal  		: out unsigned(7 downto 0)
 		);
 	end component;
 	
-	signal write_en, clk_geral, rst_grl, ehEndereco, BmaiorTeste								: std_logic;
+	signal write_en, clk_geral, rst_grl, ehEndereco, BmaiorTeste, branch_stop					: std_logic;
 	signal dataROM						  	  													: unsigned(15 downto 0);
 	signal proxEndereco, saidaBancoA, saidaBancoB, saidaULA, valorEscrito, operacaoULATESTE, entradaAULATESTE, entradaBULATESTE 	: unsigned(7 downto 0);
 	
 	-- sinais de teste
 	signal chosenRegTESTE, regAUCONTROL, regBUCONTROL, entradaRegABanco, entradaRegBBanco		: unsigned(3 downto 0);
 	signal state											: unsigned(1 downto 0);
+	signal branch_delt : unsigned(3 downto 0);
+	signal endFinal: unsigned(7 downto 0);
 	
 	begin
 	
@@ -68,7 +73,10 @@ architecture a_processador_tb of processador_tb is
 								ehEndereco => ehEndereco,
 								entradaBULATESTE => entradaBULATESTE,
 								entradaAULATESTE => entradaAULATESTE,
-								BmaiorTeste => BmaiorTeste);
+								BmaiorTeste => BmaiorTeste,
+								branch_stop => branch_stop,
+								branch_delt => branch_delt,
+								endFinal => endFinal);
 								
 	process
 	begin

@@ -20,7 +20,8 @@ entity processador is
 		  saidaBancoB		: out unsigned(7 downto 0);
 		  saidaULA			: out unsigned(7 downto 0);
 		  ---- pinos de teste
-		  BmaiorTeste		:out std_logic;
+		  branch_stop		: out std_logic;
+		  BmaiorTeste		: out std_logic;
 		  chosenRegTESTE	: out unsigned(3 downto 0);
 		  regAUCONTROL		: out unsigned(3 downto 0);
 		  regBUCONTROL		: out unsigned(3 downto 0);
@@ -31,7 +32,9 @@ entity processador is
 		  operacaoULATESTE	: out unsigned(7 downto 0);
 		  ehEndereco		: out std_logic;
 		  entradaAULATESTE	: out unsigned(7 downto 0);
-		  entradaBULATESTE	: out unsigned(7 downto 0)
+		  entradaBULATESTE	: out unsigned(7 downto 0);
+		  branch_delt 		: out unsigned(3 downto 0);
+		  endFinal  		: out unsigned(7 downto 0)
 	);
 end;
 
@@ -65,7 +68,7 @@ architecture a_processador of processador is
 	end component;
 	
 	component pc
-		port(clock  	    	: in  std_logic;
+		port(clock  	   	: in  std_logic;
 			 write_enable  	: in  std_logic;
 			 reset			: in  std_logic;
 			 entrada	    : in  unsigned(7 downto 0);
@@ -103,8 +106,7 @@ architecture a_processador of processador is
 		   chosenRegister	: out unsigned(3 downto 0);				
 		   jump_adress 		: out unsigned(7 downto 0);
 		   isAddress		: out std_logic;
-		   branch_delta		: out unsigned(3 downto 0);
-		   branch_enable	: out std_logic
+		   branch_delta		: out unsigned(3 downto 0)
 	);
 	end component;
 	
@@ -115,7 +117,7 @@ architecture a_processador of processador is
 	signal valorLiteral, valorSaidaUCONTROL			: unsigned(7 downto 0);					-- valor a ser armazenado no registrador escolhido, sai da ucontrol
 	signal valorInBanco								: unsigned(7 downto 0);					-- sinal que entra no banco de registradores
 	signal operacaoULA, resultULA, inFromULA		: unsigned(7 downto 0);					-- saída da ucontrol, com base no opcode e a entrada da ucontrol com resultado da ULA
-	signal j_enable, b_enable, indicaEndereco,Bmaiors: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
+	signal j_enable, indicaEndereco,Bmaiors			: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
 	signal operacaoUCONTROL							: unsigned(7 downto 0);
 	signal stateMachine3_s, outMaq3					: unsigned(1 downto 0);					-- resultado da máquina de estados de 3 estados
 	signal stateMachine2_s, outMaq2					: unsigned(1 downto 0);
@@ -125,6 +127,7 @@ architecture a_processador of processador is
 	signal proxEndereco_s, jumpAddres				: unsigned(7 downto 0);					-- próximo endereço, atualização do PC
 	signal branch_delta								: unsigned(3 downto 0);
 	signal endFinalBranch							: unsigned(7 downto 0);
+	signal branch_stops								: std_logic;
 	
 	begin
 	
@@ -176,16 +179,19 @@ architecture a_processador of processador is
 									chosenRegister => regEscolhido,
 									jump_adress => jumpAddres,
 									isAddress => indicaEndereco,
-									branch_enable => b_enable,
 									branch_delta => branch_delta); 
-									
+							
+
+	branch_stops <= '1' when operacaoUCONTROL = "00100111" else
+					'0';
 	
-	endFinalBranch <= ("0000" & branch_delta) + (saidaPC - "00000001");  	-- somando o descolamento delta com meu endereço atual, tenho o endereço destino do branch
+	endFinalBranch <= "0000" & (branch_delta + saidaPC(3 downto 0));  	-- somando o descolamento delta com meu endereço atual, tenho o endereço destino do branch
+	
 	
 	-- CONFIGURACAO PC
-	entradaPC <= saidaPC + "00000001" when outMaq2 = "1" and j_enable = '0' and b_enable = '0' else			-- so incrementa se nao tiver jump
-				 jumpAddres when outMaq2 = "1" and j_enable = '1' and b_enable = '0' else					-- pula para o endereço do jump se houver
-				 endFinalBranch when outMaq2 = "1" and j_enable = '0' and b_enable = '1' else							-- pc pula pro endereço do branch
+	entradaPC <= saidaPC + "00000001" when outMaq2 = "0" and j_enable = '0' and Bmaiors = '0' else			-- so incrementa se nao tiver jump
+				 jumpAddres when outMaq2 = "0" and j_enable = '1' and Bmaiors = '0' else					-- pula para o endereço do jump se houver
+				 endFinalBranch when outMaq2 = "0" and j_enable = '0' and Bmaiors = '1' else							-- pc pula pro endereço do branch
 				 saidaPC;					--* saída da maquina em 0: mantem na mesma instrução  *		-- senão, so fica na mesma instrucao
 
 	-- CONFIGURACAO ROM
@@ -243,6 +249,8 @@ architecture a_processador of processador is
 	ehEndereco		<= indicaEndereco;
 	entradaAULATESTE	<= entradaAULA;
 	entradaBULATESTE	<= entradaBULA;
+	branch_delt <= branch_delta;
+	endFinal <= endFinalBranch;
 	
 end architecture;
 	

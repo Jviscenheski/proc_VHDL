@@ -26,7 +26,6 @@ entity ucontrol is
 		   jump_adress 		: out unsigned(7 downto 0);
 		   -- o que eu mudei
 		   branch_delta		: out unsigned(3 downto 0);
-		   branch_enable	: out std_logic;
 		   ------
 		   isAddress		: out std_logic
 		   
@@ -72,7 +71,7 @@ architecture a_ucontrol of ucontrol is
 	signal b_address								: unsigned(3 downto 0);
 	signal regBranch								: unsigned(7 downto 0);
 	signal ent1s, ent2s, selOpcaos, saidas			: unsigned(7 downto 0);
-	signal bmaiors, b_enable						: std_logic;
+	signal bmaiors									: std_logic;
 	--signal isAddress_s							: std_logic;
 	
 	begin
@@ -93,10 +92,7 @@ architecture a_ucontrol of ucontrol is
 				 -- recolhe o opcode, 8 bits mais significativos
 	instrucao <= instrucao_s;
 	
-	------ o que eu mudei
-	b_enable <= '1' when instrucao_s="00100111" and bmaiors = '1' else -- da branch quando chegar no comando e o acumulador ainda não for 30 (regB)
-				'0';
-	branch_enable <= b_enable;
+
 					 
 	b_address <= commandFromROM(3 downto 0) when instrucao_s="00100111" else --endereço do registrador com o valor que vamos comparar
 				 "0000";
@@ -106,7 +102,6 @@ architecture a_ucontrol of ucontrol is
 	regBranch <= "0000" & commandFromROM(7 downto 4) when instrucao_s="00100111" else
 				 "00000000";
 	
-	-----
 					 
 	
 	jump_enable <= '1' when instrucao_s="11011100" and outMaq = "0" else											-- se for uma instrução de jump, o jumpEnable pode ser ativado
