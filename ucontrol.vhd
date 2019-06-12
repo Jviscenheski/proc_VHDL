@@ -16,7 +16,6 @@ entity ucontrol is
 		   reset_geral	 	: in std_logic;
 		   stateMachine2	: in unsigned(1 downto 0);
 		   commandFromROM	: in unsigned(15 downto 0);
-		   --returnFromULA	: in unsigned(7 downto 0);
 		   jump_enable		: out std_logic;
 		   instrucao		: out unsigned(7 downto 0);					-- opcode
 		   valor			: out unsigned(7 downto 0);					-- literal que será somado ao valor de um registrador, por exemplo
@@ -24,9 +23,7 @@ entity ucontrol is
 		   enderecoB		: out unsigned(3 downto 0);					-- B eh FONTE
 		   chosenRegister	: out unsigned(3 downto 0);				
 		   jump_adress 		: out unsigned(7 downto 0);
-		   -- o que eu mudei
 		   branch_delta		: out unsigned(3 downto 0);
-		   ------
 		   isAddress		: out std_logic
 		   
 	);

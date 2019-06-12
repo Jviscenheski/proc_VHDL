@@ -24,8 +24,6 @@ architecture a_processador_tb of processador_tb is
 			  saidaBancoB		: out unsigned(7 downto 0);
 			  saidaULA			: out unsigned(7 downto 0);
 			  -- pinos de teste
-			  branch_stop		: out std_logic;
-			  BmaiorTeste		: out std_logic;
 			  chosenRegTESTE	: out unsigned(3 downto 0);
 			  regAUCONTROL		: out unsigned(3 downto 0);
 			  regBUCONTROL		: out unsigned(3 downto 0);

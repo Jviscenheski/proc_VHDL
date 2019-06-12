@@ -20,8 +20,6 @@ entity processador is
 		  saidaBancoB		: out unsigned(7 downto 0);
 		  saidaULA			: out unsigned(7 downto 0);
 		  ---- pinos de teste
-		  branch_stop		: out std_logic;
-		  BmaiorTeste		: out std_logic;
 		  chosenRegTESTE	: out unsigned(3 downto 0);
 		  regAUCONTROL		: out unsigned(3 downto 0);
 		  regBUCONTROL		: out unsigned(3 downto 0);
@@ -214,7 +212,7 @@ architecture a_processador of processador is
 	
 	-- VALIDA PARA A INSTRUCAO DE MOV E ADD
 	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else
-					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else --or operacaoUCONTROL = "01001110" else
+					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else 
 					valorRegB when operacaoUCONTROL = "01001110" or operacaoUCONTROL="11010110" else
 					"00000000";
 	escolhidoBanco <= regA when operacaoUCONTROL = "01001110" or operacaoUCONTROL = "01011110" or operacaoUCONTROL="11010110" or operacaoUCONTROL = "00100111" else
@@ -223,7 +221,7 @@ architecture a_processador of processador is
 	
 	-- CONFIGURACAO BANCO REGISTRADORES
 	regAbanco <= regA;								
-	regBbanco <= regB; --(saidaPC - "00000001")(3 downto 0) when b_enable = '1' else  	-- pego só 4 bits ´
+	regBbanco <= regB; 
 				 
 	regEscolhido <= escolhidoBanco;
 	
@@ -237,7 +235,6 @@ architecture a_processador of processador is
 	proxEndereco <= saidaPC;
 	
 	-- Adicionando pinos de teste
-	BmaiorTeste <= Bmaiors;
 	chosenRegTESTE	<= escolhidoBanco;
 	regAUCONTROL	<= regA;
 	regBUCONTROL	<= regB;
