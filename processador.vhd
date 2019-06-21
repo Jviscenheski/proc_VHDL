@@ -108,6 +108,15 @@ architecture a_processador of processador is
 	);
 	end component;
 	
+	component ram
+		 port( clk 		: in std_logic;
+			   wr_en 	: in std_logic;
+			   endereco : in unsigned(6 downto 0);
+	           dado_in 	: in unsigned(15 downto 0);
+	           dado_out : out unsigned(15 downto 0)
+	);
+	end component;
+	
 	signal valorRegA, valorRegB						: unsigned(7 downto 0);					-- sinais de saída do banco de registrador
 	signal entradaAULA, entradaBULA					: unsigned(7 downto 0);					-- sinais de entrada da ULA
 	signal regA, regB, regEscolhido					: unsigned(3 downto 0);					-- saída da ucontrol, indica o endereço do registrador que precisa ser lido
@@ -126,6 +135,9 @@ architecture a_processador of processador is
 	signal branch_delta								: unsigned(3 downto 0);
 	signal endFinalBranch							: unsigned(7 downto 0);
 	signal branch_stops								: std_logic;
+	signal saidaRAM, entradaRAM						: unsigned(15 downto 0);
+	signal memParaReg								: std_logic;						-- isso aqui precisa ser uma saída da ucontrol - isso recebe a maquina de estados, é um sinalzinho
+	-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
 	
 	begin
 	
@@ -168,7 +180,6 @@ architecture a_processador of processador is
 									reset_geral => rst_grl,
 									stateMachine2 => stateMachine2_s,
 									commandFromROM => comandoUCONTROL,
-									--returnFromULA => inFromULA,
 									jump_enable => j_enable,
 									instrucao => operacaoUCONTROL,
 									valor => valorSaidaUCONTROL,
@@ -178,6 +189,12 @@ architecture a_processador of processador is
 									jump_adress => jumpAddres,
 									isAddress => indicaEndereco,
 									branch_delta => branch_delta); 
+									
+	ramObj: ram port map( clk => clk_geral,
+						  wr_en => write_en,
+						  endereco => resultULA,
+						  dado_in => entradaRAM,
+						  dado_out => saidaRAM);
 							
 
 	branch_stops <= '1' when operacaoUCONTROL = "00100111" else
@@ -214,6 +231,8 @@ architecture a_processador of processador is
 	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else
 					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else 
 					valorRegB when operacaoUCONTROL = "01001110" or operacaoUCONTROL="11010110" else
+					resultULA when memParaReg='1' else
+					saidaRAM when memParaReg='0' else
 					"00000000";
 	escolhidoBanco <= regA when operacaoUCONTROL = "01001110" or operacaoUCONTROL = "01011110" or operacaoUCONTROL="11010110" or operacaoUCONTROL = "00100111" else
 					  "0111" when operacaoUCONTROL = "11011011"  or operacaoUCONTROL = "11010000" else  
@@ -225,7 +244,9 @@ architecture a_processador of processador is
 				 
 	regEscolhido <= escolhidoBanco;
 	
-	-- VALIDA PARA A INSTRUCAO DE ADD
+	-- CONFIGURACAO DA RAM
+	entradaRAM <= resultULA;	
+	
 	
 	--Adicionando os pinos de saída
 	saidaBancoA <= valorRegA;
