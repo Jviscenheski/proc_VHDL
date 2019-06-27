@@ -56,6 +56,7 @@ architecture a_processador of processador is
 		port(ent1, ent2		: in unsigned (7 downto 0);
 			 selOpcao		: in unsigned (7 downto 0);					-- operação que será realizada pela ULA, vem do Ucontrol
 			 saida			: out unsigned (7 downto 0);
+			 end_out		: out unsigned(7 downto 0);
 			 Bmaior			: out std_logic
 	);
 	end component;
@@ -135,9 +136,9 @@ architecture a_processador of processador is
 	signal dataROM_s								: unsigned(15 downto 0);				-- informação da ROM
 	signal proxEndereco_s, jumpAddres				: unsigned(7 downto 0);					-- próximo endereço, atualização do PC
 	signal branch_delta								: unsigned(3 downto 0);
-	signal endFinalBranch							: unsigned(7 downto 0);
+	signal endFinalBranch, end_outULA				: unsigned(7 downto 0);
 	signal branch_stops								: std_logic;
-	signal saidaRAM, entradaRAM						: unsigned(7 downto 0);
+	signal saidaRAM, entradaRAM, enderecoRAM		: unsigned(7 downto 0);
 	signal memParaReg								: unsigned(1 downto 0);						-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
 	
 	begin
@@ -156,6 +157,7 @@ architecture a_processador of processador is
 						  ent2 => entradaBULA,
 						  selOpcao => operacaoULA,
 					      saida => resultULA,
+						  end_out => end_outULA,
 						  Bmaior => Bmaiors);
 								
 	romObj: rom port map( clock => clk_geral,
@@ -193,7 +195,7 @@ architecture a_processador of processador is
 									
 	ramObj: ram port map( clk => clk_geral,
 						  wr_en => write_en,
-						  endereco => resultULA,
+						  endereco => enderecoRAM,
 						  dado_in => entradaRAM,
 						  dado_out => saidaRAM);
 							
@@ -219,10 +221,11 @@ architecture a_processador of processador is
 	
 	-- CONFIGURACAO ULA
 	entradaAULA <= valorRegA;																				
-	entradaBULA <= valorSaidaUCONTROL when operacaoUCONTROL = "11011011" and indicaEndereco = '0' else
-				   valorSaidaUCONTROL when operacaoUCONTROL = "11010000" else
-				   valorRegB when operacaoUCONTROL = "11011011" and indicaEndereco = '1' else					-- o valor do registrador vai para a entrada da ULA	
-				   valorRegB when operacaoUCONTROL = "00100111" else
+	entradaBULA <= valorSaidaUCONTROL when operacaoUCONTROL = "11011011" and indicaEndereco = '0' else -- ADD com constante
+				   valorSaidaUCONTROL when operacaoUCONTROL = "11010000" else						   -- SUB
+				   valorSaidaUCONTROL when operacaoUCONTROL = "11010111" else 						   -- STORE
+				   valorRegB when operacaoUCONTROL = "11011011" and indicaEndereco = '1' else		   -- ADD com endereço (o valor do registrador vai para a entrada da ULA)	
+				   valorRegB when operacaoUCONTROL = "00100111" else								   -- BRANCH
 				   "00000000";
 	operacaoULA <= operacaoUCONTROL; -- "11011011" when operacaoUCONTROL = "00100111" and b_enable = '1' else	-- operação de subtração quando for branch	
 					 														-- opcode determina a operacao
@@ -232,11 +235,14 @@ architecture a_processador of processador is
 	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else
 					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else 
 					valorRegB when operacaoUCONTROL = "01001110" or operacaoUCONTROL="11010110" else
-					resultULA when memParaReg = "1" else
-					saidaRAM when memParaReg = "0" else
+					--resultULA when memParaReg = "1" else ??
+					--saidaRAM when memParaReg = "0" else ??
+					saidaRAM when operacaoUCONTROL = "11010110" else -- (LOAD) valor a ser armezenado no reg vindo da RAM
 					"00000000";
-	escolhidoBanco <= regA when operacaoUCONTROL = "01001110" or operacaoUCONTROL = "01011110" or operacaoUCONTROL="11010110" or operacaoUCONTROL = "00100111" else
+					
+	escolhidoBanco <= regA when operacaoUCONTROL = "01001110" or operacaoUCONTROL = "01011110" or operacaoUCONTROL = "00100111" else
 					  "0111" when operacaoUCONTROL = "11011011"  or operacaoUCONTROL = "11010000" else  
+					  "0111" when operacaoUCONTROL = "11010110" else -- (LOAD) coloca o dado adquirido da RAM no acumulador
 					  "0000";
 	
 	-- CONFIGURACAO BANCO REGISTRADORES
@@ -246,7 +252,13 @@ architecture a_processador of processador is
 	regEscolhido <= escolhidoBanco;
 	
 	-- CONFIGURACAO DA RAM
-	entradaRAM <= valorRegB;	
+	entradaRAM <= resultULA when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado de saída da ULA	
+				  "00000000";
+				
+	enderecoRAM <= end_outULA when operacaoUCONTROL = "11010111" else 					-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA
+				   comandoUCONTROL(7 downto 0) when operacaoUCONTROL = "11010110" else	-- (LOAD) endereço do qual eu quero obter o dado
+				   "00000000";
+	
 	
 	--Adicionando os pinos de saída
 	saidaBancoA <= valorRegA;

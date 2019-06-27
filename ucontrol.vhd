@@ -56,7 +56,8 @@ architecture a_ucontrol of ucontrol is
 	component ula
 		port(ent1, ent2	: in unsigned (7 downto 0);
 			 selOpcao	: in unsigned (7 downto 0);			-- operação que será realizada pela ULA, vem do Ucontrol
-			 saida		: out unsigned (7 downto 0);
+			 saida		: out unsigned(7 downto 0);
+			 end_out	: out unsigned(7 downto 0);
 			 Bmaior		: out std_logic
 	);
 	end component;
@@ -66,7 +67,7 @@ architecture a_ucontrol of ucontrol is
 	signal instrucao_s								: unsigned(7 downto 0);
 	signal notAdress, complemento					: unsigned(7 downto 0);
 	signal b_address								: unsigned(3 downto 0);
-	signal regBranch								: unsigned(7 downto 0);
+	signal regBranch, endereco_ram					: unsigned(7 downto 0);
 	signal ent1s, ent2s, selOpcaos, saidas			: unsigned(7 downto 0);
 	signal bmaiors									: std_logic;
 	--signal isAddress_s							: std_logic;
@@ -81,6 +82,7 @@ architecture a_ucontrol of ucontrol is
 						  ent2 => ent2s,
 						  selOpcao => selOpcaos,
 						  saida => saidas,
+						  end_out => endereco_ram,
 						  Bmaior => bmaiors);
 
 						   
@@ -117,11 +119,13 @@ architecture a_ucontrol of ucontrol is
 				 
 	valor <=  "01111111" and valorIntermediario when commandFromROM(15 downto 8)="11011011" or commandFromROM(15 downto 8)="11010000" else -- ADD E SUB
 			  "00001111" and valorIntermediario when commandFromROM(15 downto 8)="01011110" else -- MOVA
+			  commandFromROM(7 downto 0) when commandFromROM(15 downto 8) = "11010111" else
 			  "00000000";	 		  
 	
 	enderecoA <= commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="01001110"  else								-- terceiro grupo de 4 bits quando é um MOV
 				 --commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="00100111" and b_enable='1' else				-- valor do deslocamente delta no branch
 				 "0111" when (commandFromROM(15 downto 8)="11011011") or (commandFromROM(15 downto 8)="11010000") or (commandFromROM(15 downto 8)="01011110") or (commandFromROM(15 downto 8)="11010110") or (commandFromROM(15 downto 8)="00100111") else	-- endereço do acumulador quando é um add, porque o add só é feito no acumulador
+				 "0111" when commandFromROM(15 downto 8) = "11010111" else --STORE STA
 				 "0000";
 
 	enderecoB <= commandFromROM(3 downto 0) when commandFromROM(15 downto 8)="01001110" or commandFromROM(15  downto 8)="11010110" else				-- 4 últimos bits em caso de MOV
