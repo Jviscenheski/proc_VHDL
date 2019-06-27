@@ -2,9 +2,9 @@
 -- Curso: Engenharia de Computação
 -- Disciplina: Arquitetura e Organização de Computadores
 -- Professor responsável: Juliano Mourão
--- Referente a: Condicionais e Desvios
+-- Referente a: Memória de Dados
 -- Alunas: Caroline Rosa e Juliana Rodrigues
--- Curitiba, 31/05/2019
+-- Curitiba, 17/06/2019
 
 library ieee;
 use ieee.std_logic_1164.all;

@@ -2,9 +2,9 @@
 -- Curso: Engenharia de Computação
 -- Disciplina: Arquitetura e Organização de Computadores
 -- Professor responsável: Juliano Mourão
--- Referente a: Condicionais e Desvios
+-- Referente a: Memória de Dados
 -- Alunas: Caroline Rosa e Juliana Rodrigues
--- Curitiba, 31/05/2019
+-- Curitiba, 17/06/2019
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -32,7 +32,9 @@ entity processador is
 		  entradaAULATESTE	: out unsigned(7 downto 0);
 		  entradaBULATESTE	: out unsigned(7 downto 0);
 		  branch_delt 		: out unsigned(3 downto 0);
-		  endFinal  		: out unsigned(7 downto 0)
+		  endFinal  		: out unsigned(7 downto 0);
+		  dado_outRAM		: out unsigned(7 downto 0);
+		  memToReg			: std_logic
 	);
 end;
 
@@ -136,8 +138,7 @@ architecture a_processador of processador is
 	signal endFinalBranch							: unsigned(7 downto 0);
 	signal branch_stops								: std_logic;
 	signal saidaRAM, entradaRAM						: unsigned(15 downto 0);
-	signal memParaReg								: std_logic;						-- isso aqui precisa ser uma saída da ucontrol - isso recebe a maquina de estados, é um sinalzinho
-	-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
+	signal memParaReg								: unsigned(1 downto 0);						-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
 	
 	begin
 	
@@ -196,12 +197,12 @@ architecture a_processador of processador is
 						  dado_in => entradaRAM,
 						  dado_out => saidaRAM);
 							
+	memParaReg <= outMaq2;
 
 	branch_stops <= '1' when operacaoUCONTROL = "00100111" else
 					'0';
 	
 	endFinalBranch <= "0000" & (branch_delta + saidaPC(3 downto 0));  	-- somando o descolamento delta com meu endereço atual, tenho o endereço destino do branch
-	
 	
 	-- CONFIGURACAO PC
 	entradaPC <= saidaPC + "00000001" when outMaq2 = "0" and j_enable = '0' and Bmaiors = '0' else			-- so incrementa se nao tiver jump
@@ -231,8 +232,8 @@ architecture a_processador of processador is
 	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else
 					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else 
 					valorRegB when operacaoUCONTROL = "01001110" or operacaoUCONTROL="11010110" else
-					resultULA when memParaReg='1' else
-					saidaRAM when memParaReg='0' else
+					resultULA when memParaReg = "1" else
+					saidaRAM when memParaReg = "0" else
 					"00000000";
 	escolhidoBanco <= regA when operacaoUCONTROL = "01001110" or operacaoUCONTROL = "01011110" or operacaoUCONTROL="11010110" or operacaoUCONTROL = "00100111" else
 					  "0111" when operacaoUCONTROL = "11011011"  or operacaoUCONTROL = "11010000" else  
@@ -245,8 +246,7 @@ architecture a_processador of processador is
 	regEscolhido <= escolhidoBanco;
 	
 	-- CONFIGURACAO DA RAM
-	entradaRAM <= resultULA;	
-	
+	entradaRAM <= valorRegB;	
 	
 	--Adicionando os pinos de saída
 	saidaBancoA <= valorRegA;
@@ -269,6 +269,8 @@ architecture a_processador of processador is
 	entradaBULATESTE	<= entradaBULA;
 	branch_delt <= branch_delta;
 	endFinal <= endFinalBranch;
+	dado_outRAM <= saidaRAM;
+	memToReg <= memParaReg;
 	
 end architecture;
 	

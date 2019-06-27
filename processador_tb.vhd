@@ -2,9 +2,9 @@
 -- Curso: Engenharia de Computação
 -- Disciplina: Arquitetura e Organização de Computadores
 -- Professor responsável: Juliano Mourão
--- Referente a: Condicionais e Desvios
+-- Referente a: Memória de Dados
 -- Alunas: Caroline Rosa e Juliana Rodrigues
--- Curitiba, 31/05/2019
+-- Curitiba, 17/06/2019
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -36,7 +36,9 @@ architecture a_processador_tb of processador_tb is
 			  entradaAULATESTE	: out unsigned(7 downto 0);
 			  entradaBULATESTE	: out unsigned(7 downto 0);
 			  branch_delt 		: out unsigned(3 downto 0);
-			  endFinal  		: out unsigned(7 downto 0)
+			  endFinal  		: out unsigned(7 downto 0);
+			  dado_outRAM		: out unsigned(7 downto 0);
+			  memToReg			: std_logic
 		);
 	end component;
 	
@@ -74,7 +76,9 @@ architecture a_processador_tb of processador_tb is
 								BmaiorTeste => BmaiorTeste,
 								branch_stop => branch_stop,
 								branch_delt => branch_delt,
-								endFinal => endFinal);
+								endFinal => endFinal,
+								dado_outRAM	=> dado_outRAM,
+								memToReg => memToReg);
 								
 	process
 	begin
