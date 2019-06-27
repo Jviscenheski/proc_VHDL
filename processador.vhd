@@ -34,7 +34,7 @@ entity processador is
 		  branch_delt 		: out unsigned(3 downto 0);
 		  endFinal  		: out unsigned(7 downto 0);
 		  dado_outRAM		: out unsigned(7 downto 0);
-		  memToReg			: std_logic
+		  memToReg			: out unsigned(1 downto 0)
 	);
 end;
 
@@ -113,9 +113,9 @@ architecture a_processador of processador is
 	component ram
 		 port( clk 		: in std_logic;
 			   wr_en 	: in std_logic;
-			   endereco : in unsigned(6 downto 0);
-	           dado_in 	: in unsigned(15 downto 0);
-	           dado_out : out unsigned(15 downto 0)
+			   endereco : in unsigned(7 downto 0);
+	           dado_in 	: in unsigned(7 downto 0);
+	           dado_out : out unsigned(7 downto 0)
 	);
 	end component;
 	
@@ -137,7 +137,7 @@ architecture a_processador of processador is
 	signal branch_delta								: unsigned(3 downto 0);
 	signal endFinalBranch							: unsigned(7 downto 0);
 	signal branch_stops								: std_logic;
-	signal saidaRAM, entradaRAM						: unsigned(15 downto 0);
+	signal saidaRAM, entradaRAM						: unsigned(7 downto 0);
 	signal memParaReg								: unsigned(1 downto 0);						-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
 	
 	begin

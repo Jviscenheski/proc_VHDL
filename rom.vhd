@@ -22,7 +22,7 @@ architecture a_rom of rom is
 	constant conteudo_rom : mem := (
 		-- endereco => conteudo
 		
-		-- ROM OFICIAL
+		-- ROM REAL OFICIAL
 		--0 => "0101111001110000",
 		--1 => "1101101100011110",
 		--2 => "0100111001100111",
