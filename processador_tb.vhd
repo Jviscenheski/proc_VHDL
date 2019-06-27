@@ -38,19 +38,19 @@ architecture a_processador_tb of processador_tb is
 			  branch_delt 		: out unsigned(3 downto 0);
 			  endFinal  		: out unsigned(7 downto 0);
 			  dado_outRAM		: out unsigned(7 downto 0);
-			  memToReg			: std_logic
+			  memToReg			: out unsigned(1 downto 0)
 		);
 	end component;
 	
-	signal write_en, clk_geral, rst_grl, ehEndereco, BmaiorTeste, branch_stop					: std_logic;
+	signal write_en, clk_geral, rst_grl, ehEndereco					: std_logic;
 	signal dataROM						  	  													: unsigned(15 downto 0);
 	signal proxEndereco, saidaBancoA, saidaBancoB, saidaULA, valorEscrito, operacaoULATESTE, entradaAULATESTE, entradaBULATESTE 	: unsigned(7 downto 0);
 	
 	-- sinais de teste
 	signal chosenRegTESTE, regAUCONTROL, regBUCONTROL, entradaRegABanco, entradaRegBBanco		: unsigned(3 downto 0);
-	signal state											: unsigned(1 downto 0);
+	signal state, memToReg											: unsigned(1 downto 0);
 	signal branch_delt : unsigned(3 downto 0);
-	signal endFinal: unsigned(7 downto 0);
+	signal endFinal, dado_outRAM: unsigned(7 downto 0);
 	
 	begin
 	
@@ -73,8 +73,6 @@ architecture a_processador_tb of processador_tb is
 								ehEndereco => ehEndereco,
 								entradaBULATESTE => entradaBULATESTE,
 								entradaAULATESTE => entradaAULATESTE,
-								BmaiorTeste => BmaiorTeste,
-								branch_stop => branch_stop,
 								branch_delt => branch_delt,
 								endFinal => endFinal,
 								dado_outRAM	=> dado_outRAM,
