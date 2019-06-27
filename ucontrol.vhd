@@ -57,7 +57,6 @@ architecture a_ucontrol of ucontrol is
 		port(ent1, ent2	: in unsigned (7 downto 0);
 			 selOpcao	: in unsigned (7 downto 0);			-- operação que será realizada pela ULA, vem do Ucontrol
 			 saida		: out unsigned(7 downto 0);
-			 end_out	: out unsigned(7 downto 0);
 			 Bmaior		: out std_logic
 	);
 	end component;
@@ -82,26 +81,20 @@ architecture a_ucontrol of ucontrol is
 						  ent2 => ent2s,
 						  selOpcao => selOpcaos,
 						  saida => saidas,
-						  end_out => endereco_ram,
 						  Bmaior => bmaiors);
 
 						   
 	instrucao_s <= commandFromROM(15 downto 8) when outMaq = "0" else
-				 "00000000";	
-				 -- recolhe o opcode, 8 bits mais significativos
+				 "00000000";												-- recolhe o opcode, 8 bits mais significativos
 	instrucao <= instrucao_s;
-	
-
 					 
-	b_address <= commandFromROM(3 downto 0) when instrucao_s="00100111" else --endereço do registrador com o valor que vamos comparar
+	b_address <= commandFromROM(3 downto 0) when instrucao_s="00100111" else 	--endereço do registrador com o valor que vamos comparar quando for uma instrucao de BNE
 				 "0000";
 					 
 	branch_delta <= b_address;
 	
-	regBranch <= "0000" & commandFromROM(7 downto 4) when instrucao_s="00100111" else
+	regBranch <= "0000" & commandFromROM(7 downto 4) when instrucao_s="00100111" else		-- end registrador quando a instrucao for de BNE
 				 "00000000";
-	
-					 
 	
 	jump_enable <= '1' when instrucao_s="11011100" and outMaq = "0" else											-- se for uma instrução de jump, o jumpEnable pode ser ativado
 				   '0';
@@ -109,9 +102,9 @@ architecture a_ucontrol of ucontrol is
 	jump_adress <= commandFromROM(7 downto 0) when instrucao_s="11011100" and outMaq = "0" else					-- em uma instrução de jump, o endereço para o salto corresponde aos 8 bits menos significativos
 				   "00000000";
 				  
-	valorIntermediario <= commandFromROM(7 downto 0) when commandFromROM(15 downto 7)="110110110" and outMaq = "0" else	-- quando for uma instrução adicionando uma constante no acumulador 
-					      commandFromROM(7 downto 0) when commandFromROM(15 downto 8)="01011110" else
-						  commandFromROM(7 downto 0) when commandFromROM(15 downto 8)="11010000" and outMaq = "0" else
+	valorIntermediario <= commandFromROM(7 downto 0) when commandFromROM(15 downto 7)="110110110" and outMaq = "0" else	-- quando for uma instrução adicionando uma constante no acumulador  ADD
+					      commandFromROM(7 downto 0) when commandFromROM(15 downto 8)="01011110" else					-- quando for uma instrucao adicionando uma constante no acumulador MOVA
+						  commandFromROM(7 downto 0) when commandFromROM(15 downto 8)="11010000" and outMaq = "0" else	-- quando for uma instrucao de sub - pega o valor que precisa ser reduzido
 						  "00000000";																		
 
 	isAddress <= '1' when commandFromROM(15 downto 7)="110110111" else
@@ -119,18 +112,20 @@ architecture a_ucontrol of ucontrol is
 				 
 	valor <=  "01111111" and valorIntermediario when commandFromROM(15 downto 8)="11011011" or commandFromROM(15 downto 8)="11010000" else -- ADD E SUB
 			  "00001111" and valorIntermediario when commandFromROM(15 downto 8)="01011110" else -- MOVA
-			  commandFromROM(7 downto 0) when commandFromROM(15 downto 8) = "11010111" else
+			  --commandFromROM(7 downto 0) when commandFromROM(15 downto 8) = "11010111" else -- STA
 			  "00000000";	 		  
 	
 	enderecoA <= commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="01001110"  else								-- terceiro grupo de 4 bits quando é um MOV
 				 --commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="00100111" and b_enable='1' else				-- valor do deslocamente delta no branch
 				 "0111" when (commandFromROM(15 downto 8)="11011011") or (commandFromROM(15 downto 8)="11010000") or (commandFromROM(15 downto 8)="01011110") or (commandFromROM(15 downto 8)="11010110") or (commandFromROM(15 downto 8)="00100111") else	-- endereço do acumulador quando é um add, porque o add só é feito no acumulador
-				 "0111" when commandFromROM(15 downto 8) = "11010111" else --STORE STA
+				 "0001" when commandFromROM(15 downto 8) = "11010111" else -- STORE STA
+				 "0010" when commandFromROM(15 downto 8) = "11010110" else -- LOAD LDA
 				 "0000";
 
 	enderecoB <= commandFromROM(3 downto 0) when commandFromROM(15 downto 8)="01001110" or commandFromROM(15  downto 8)="11010110" else				-- 4 últimos bits em caso de MOV
 				 commandFromROM(3 downto 0) when commandFromROM(15 downto 7)="110110111" or commandFromROM(15 downto 8)="11010000" else
 				 commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="00100111" else														-- reg6 com o número pra comparar e ver se faz branch
+				 "0111" when commandFromROM(15 downto 8) = "11010111" else --STORE STA
 				 "0000"; 
 				 
 	chosenRegister <= "0111" when commandFromROM(15 downto 8)="11011011" or commandFromROM(15 downto 8)="01011110" or commandFromROM(15 downto 8)="11010110" or commandFromROM(15 downto 8)="11010000" else

@@ -13,7 +13,6 @@ entity ULA is
 	port(ent1, ent2	: in unsigned (7 downto 0);
 		 selOpcao	: in unsigned (7 downto 0);			-- operação que será realizada pela ULA, vem do Ucontrol
 		 saida		: out unsigned(7 downto 0);
-		 end_out	: out unsigned(7 downto 0);
 		 Bmaior		: out std_logic
 	);
 end entity;
@@ -24,11 +23,8 @@ begin
     saida <= ent1+ent2 when selOpcao="11011011" else 	-- add
 			 ent1-ent2 when selOpcao="11010000" else	-- sub
 			 ent2	   when selOpcao="01011110" else	-- MOVA A,valor
-			 ent1 	   when selOpcao="11010111" else	-- valor pra armazenar na RAM (STORE)
+			 --ent1 	   when selOpcao="11010111" else	-- valor pra armazenar na RAM (STORE)
 			 "00000000";
-				
-	end_out <= ent2 when selOpcao="11010111" else		-- endereço da RAM pra armazenar o valor (STORE)
-			   "00000000";
 			 
 	Bmaior <= '1' when ent1 < ent2 and selOpcao="00100111" else
 			  '0';

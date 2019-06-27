@@ -56,7 +56,6 @@ architecture a_processador of processador is
 		port(ent1, ent2		: in unsigned (7 downto 0);
 			 selOpcao		: in unsigned (7 downto 0);					-- operação que será realizada pela ULA, vem do Ucontrol
 			 saida			: out unsigned (7 downto 0);
-			 end_out		: out unsigned(7 downto 0);
 			 Bmaior			: out std_logic
 	);
 	end component;
@@ -97,8 +96,6 @@ architecture a_processador of processador is
 		   reset_geral	 	: in std_logic;
 		   stateMachine2	: in unsigned(1 downto 0);
 		   commandFromROM	: in unsigned(15 downto 0);
-		   --returnFromULA	: in unsigned(7 downto 0);
-		   
 		   jump_enable		: out std_logic;
 		   instrucao		: out unsigned(7 downto 0);					-- opcode
 		   valor			: out unsigned(7 downto 0);					-- literal que será somado ao valor de um registrador, por exemplo
@@ -157,7 +154,6 @@ architecture a_processador of processador is
 						  ent2 => entradaBULA,
 						  selOpcao => operacaoULA,
 					      saida => resultULA,
-						  end_out => end_outULA,
 						  Bmaior => Bmaiors);
 								
 	romObj: rom port map( clock => clk_geral,
@@ -252,10 +248,10 @@ architecture a_processador of processador is
 	regEscolhido <= escolhidoBanco;
 	
 	-- CONFIGURACAO DA RAM
-	entradaRAM <= resultULA when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado de saída da ULA	
+	entradaRAM <= valorRegB when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado de saída do banco de registradores
 				  "00000000";
 				
-	enderecoRAM <= end_outULA when operacaoUCONTROL = "11010111" else 					-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA
+	enderecoRAM <= valorRegA when operacaoUCONTROL = "11010111" else 					-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA
 				   comandoUCONTROL(7 downto 0) when operacaoUCONTROL = "11010110" else	-- (LOAD) endereço do qual eu quero obter o dado
 				   "00000000";
 	
@@ -268,17 +264,17 @@ architecture a_processador of processador is
 	proxEndereco <= saidaPC;
 	
 	-- Adicionando pinos de teste
-	chosenRegTESTE	<= escolhidoBanco;
-	regAUCONTROL	<= regA;
-	regBUCONTROL	<= regB;
+	chosenRegTESTE <= escolhidoBanco;
+	regAUCONTROL <= regA;
+	regBUCONTROL <= regB;
 	entradaRegABanco <= regAbanco;
 	entradaRegBBanco <= regBbanco;
-	state 			<= stateMachine2_s;
-	valorEscrito	<= valorLiteral;
-	operacaoULATESTE<= operacaoULA;
-	ehEndereco		<= indicaEndereco;
-	entradaAULATESTE	<= entradaAULA;
-	entradaBULATESTE	<= entradaBULA;
+	state <= stateMachine2_s;
+	valorEscrito <= valorLiteral;
+	operacaoULATESTE <= operacaoULA;
+	ehEndereco <= indicaEndereco;
+	entradaAULATESTE <= entradaAULA;
+	entradaBULATESTE <= entradaBULA;
 	branch_delt <= branch_delta;
 	endFinal <= endFinalBranch;
 	dado_outRAM <= saidaRAM;
