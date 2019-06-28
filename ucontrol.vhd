@@ -107,7 +107,7 @@ architecture a_ucontrol of ucontrol is
 						  commandFromROM(7 downto 0) when commandFromROM(15 downto 8)="11010000" and outMaq = "0" else	-- quando for uma instrucao de sub - pega o valor que precisa ser reduzido
 						  "00000000";																		
 
-	isAddress <= '1' when commandFromROM(15 downto 7)="110110111" else
+	isAddress <= '1' when commandFromROM(15 downto 7)="110110111" else 
 				 '0';
 				 
 	valor <=  "01111111" and valorIntermediario when commandFromROM(15 downto 8)="11011011" or commandFromROM(15 downto 8)="11010000" else -- ADD E SUB
