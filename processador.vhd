@@ -33,8 +33,11 @@ entity processador is
 		  entradaBULATESTE	: out unsigned(7 downto 0);
 		  branch_delt 		: out unsigned(3 downto 0);
 		  endFinal  		: out unsigned(7 downto 0);
+		  memToReg			: out unsigned(1 downto 0);
+		  dado_inRAM		: out unsigned(7 downto 0);		  
 		  dado_outRAM		: out unsigned(7 downto 0);
-		  memToReg			: out unsigned(1 downto 0)
+		  address_RAM		: out unsigned(7 downto 0)
+		  
 	);
 end;
 
@@ -251,9 +254,9 @@ architecture a_processador of processador is
 	entradaRAM <= valorRegB when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado de saída do banco de registradores
 				  "00000000";
 				
-	enderecoRAM <= valorRegA when operacaoUCONTROL = "11010111" else 					-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA
+	enderecoRAM <= valorRegA when operacaoUCONTROL = "11010111" else 	 --REG1	-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA
 				   --"0000" & comandoUCONTROL(7 downto 4) when operacaoUCONTROL = "11010110" else	-- (LOAD) endereço do qual eu quero obter o dado
-				   valorRegA when operacaoUCONTROL = "11010110" else					-- LOAD
+				   valorRegA when operacaoUCONTROL = "11010110" else	--REG2				-- LOAD
 				   "00000000";
 	
 	
@@ -278,8 +281,10 @@ architecture a_processador of processador is
 	entradaBULATESTE <= entradaBULA;
 	branch_delt <= branch_delta;
 	endFinal <= endFinalBranch;
-	dado_outRAM <= saidaRAM;
 	memToReg <= memParaReg;
+	dado_inRAM <= entradaRAM;
+	dado_outRAM <= saidaRAM;
+	address_RAM <= enderecoRAM;
 	
 end architecture;
 	

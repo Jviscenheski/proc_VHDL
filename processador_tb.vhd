@@ -31,14 +31,16 @@ architecture a_processador_tb of processador_tb is
 			  valorEscrito		: out unsigned(7 downto 0);
 			  entradaRegABanco	: out unsigned(3 downto 0);
 			  entradaRegBBanco	: out unsigned(3 downto 0);
-			  operacaoULATESTE	: out unsigned(7 downto 0);
+			  operacaoULATESTE	: out unsigned(7 downto 0); 
 			  ehEndereco		: out std_logic;
 			  entradaAULATESTE	: out unsigned(7 downto 0);
 			  entradaBULATESTE	: out unsigned(7 downto 0);
 			  branch_delt 		: out unsigned(3 downto 0);
 			  endFinal  		: out unsigned(7 downto 0);
+			  memToReg			: out unsigned(1 downto 0);
+			  dado_inRAM		: out unsigned(7 downto 0);		  
 			  dado_outRAM		: out unsigned(7 downto 0);
-			  memToReg			: out unsigned(1 downto 0)
+			  address_RAM		: out unsigned(7 downto 0)	
 		);
 	end component;
 	
@@ -50,7 +52,7 @@ architecture a_processador_tb of processador_tb is
 	signal chosenRegTESTE, regAUCONTROL, regBUCONTROL, entradaRegABanco, entradaRegBBanco		: unsigned(3 downto 0);
 	signal state, memToReg											: unsigned(1 downto 0);
 	signal branch_delt : unsigned(3 downto 0);
-	signal endFinal, dado_outRAM: unsigned(7 downto 0);
+	signal endFinal, dado_outRAM, dado_inRAM, address_RAM: unsigned(7 downto 0);
 	
 	begin
 	
@@ -75,7 +77,9 @@ architecture a_processador_tb of processador_tb is
 								entradaAULATESTE => entradaAULATESTE,
 								branch_delt => branch_delt,
 								endFinal => endFinal,
+								dado_inRAM => dado_inRAM,
 								dado_outRAM	=> dado_outRAM,
+								address_RAM => address_RAM,
 								memToReg => memToReg);
 								
 	process
