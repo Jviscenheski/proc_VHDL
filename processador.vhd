@@ -137,7 +137,7 @@ architecture a_processador of processador is
 	signal proxEndereco_s, jumpAddres				: unsigned(7 downto 0);					-- próximo endereço, atualização do PC
 	signal branch_delta								: unsigned(3 downto 0);
 	signal endFinalBranch, end_outULA				: unsigned(7 downto 0);
-	signal branch_stops								: std_logic;
+	signal ram_enable, ram_en_temp					: std_logic;
 	signal saidaRAM, entradaRAM, enderecoRAM		: unsigned(7 downto 0);
 	signal memParaReg								: unsigned(1 downto 0);						-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
 	
@@ -193,16 +193,13 @@ architecture a_processador of processador is
 									branch_delta => branch_delta); 
 									
 	ramObj: ram port map( clk => clk_geral,
-						  wr_en => write_en,
+						  wr_en => ram_enable,
 						  endereco => enderecoRAM,
 						  dado_in => entradaRAM,
 						  dado_out => saidaRAM);
 							
 	memParaReg <= outMaq2;
 
-	branch_stops <= '1' when operacaoUCONTROL = "00100111" else
-					'0';
-	
 	endFinalBranch <= "0000" & (branch_delta + saidaPC(3 downto 0));  	-- somando o descolamento delta com meu endereço atual, tenho o endereço destino do branch
 	
 	-- CONFIGURACAO PC
@@ -251,7 +248,10 @@ architecture a_processador of processador is
 	regEscolhido <= escolhidoBanco;
 	
 	-- CONFIGURACAO DA RAM
-	entradaRAM <= valorRegB when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado de saída do banco de registradores
+	ram_enable <= '1' when operacaoUCONTROL = "11010110" else 			-- LOAD ativa write enable da RAM
+				  '0';
+	
+	entradaRAM <= valorRegB when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado do REGB
 				  "00000000";
 				
 	enderecoRAM <= valorRegA when operacaoUCONTROL = "11010111" else 	 --REG1	-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA

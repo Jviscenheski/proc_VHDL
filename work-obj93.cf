@@ -1,7 +1,7 @@
 v 4
-file . "processador.vhd" "337d0e7f7081b71b591213e8d3eb5085d24a9b1d" "20190628010531.323":
-  entity processador at 9( 299) + 0 on 73;
-  architecture a_processador of processador at 44( 1710) + 0 on 74;
+file . "processador.vhd" "9fadfee1adf89785c9decb85627ff996ee69d9d7" "20190628014449.364":
+  entity processador at 9( 299) + 0 on 81;
+  architecture a_processador of processador at 44( 1710) + 0 on 82;
 file . "ram.vhd" "ad7200a5f6aa8be4e8010fbbc06b0c538cc4a56b" "20190627230445.010":
   entity ram at 9( 299) + 0 on 27;
   architecture a_ram of ram at 22( 590) + 0 on 28;
@@ -29,6 +29,6 @@ file . "ucontrol.vhd" "4304b975dea25b18256305a44412f12cc3748b92" "20190628010517
 file . "bancoReg_8.vhd" "a4da41aba709369fd03df04ae6651ac31b45c03b" "20190627230546.320":
   entity bancoreg_8 at 9( 304) + 0 on 33;
   architecture a_bancoreg_8 of bancoreg_8 at 27( 1204) + 0 on 34;
-file . "processador_tb.vhd" "c0e43a6340c7abd8ea75af2d1380a4c9b5942e69" "20190628010539.905":
-  entity processador_tb at 9( 299) + 0 on 75;
-  architecture a_processador_tb of processador_tb at 16( 414) + 0 on 76;
+file . "processador_tb.vhd" "c0e43a6340c7abd8ea75af2d1380a4c9b5942e69" "20190628014456.316":
+  entity processador_tb at 9( 299) + 0 on 83;
+  architecture a_processador_tb of processador_tb at 16( 414) + 0 on 84;
