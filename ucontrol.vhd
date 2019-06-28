@@ -69,7 +69,6 @@ architecture a_ucontrol of ucontrol is
 	signal regBranch, endereco_ram					: unsigned(7 downto 0);
 	signal ent1s, ent2s, selOpcaos, saidas			: unsigned(7 downto 0);
 	signal bmaiors									: std_logic;
-	--signal isAddress_s							: std_logic;
 	
 	begin
 	
@@ -116,7 +115,6 @@ architecture a_ucontrol of ucontrol is
 			  "00000000";	 		  
 	
 	enderecoA <= commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="01001110"  else								-- terceiro grupo de 4 bits quando é um MOV
-				 --commandFromROM(7 downto 4) when commandFromROM(15 downto 8)="00100111" and b_enable='1' else				-- valor do deslocamente delta no branch
 				 "0111" when (commandFromROM(15 downto 8)="11011011") or (commandFromROM(15 downto 8)="11010000") or (commandFromROM(15 downto 8)="01011110") or (commandFromROM(15 downto 8)="00100111") else	-- endereço do acumulador quando é um add, porque o add só é feito no acumulador
 				 "0001" when commandFromROM(15 downto 8) = "11010111" else -- STORE STA
 				 "0010" when commandFromROM(15 downto 8) = "11010110" else -- LOAD LDA

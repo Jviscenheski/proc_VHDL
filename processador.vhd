@@ -11,8 +11,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity processador is
-	port (write_en			: in std_logic;						-- parâmetros necessários
-		  clk_geral			: in std_logic;						-- parâmetros necessários
+	port (clk_geral			: in std_logic;						-- parâmetros necessários
 		  rst_grl			: in std_logic;						-- parâmetros necessários
 		  dataROM			: out unsigned(15 downto 0);		-- instrução que vem da ROM
 		  proxEndereco		: out unsigned(7 downto 0);			-- atualizacao do PC
@@ -94,20 +93,20 @@ architecture a_processador of processador is
 	end component;
 	
 	component ucontrol
-		port ( clock_geral	 	: in std_logic;
-		   wr_enable	   	: in std_logic;
-		   reset_geral	 	: in std_logic;
-		   stateMachine2	: in unsigned(1 downto 0);
-		   commandFromROM	: in unsigned(15 downto 0);
-		   jump_enable		: out std_logic;
-		   instrucao		: out unsigned(7 downto 0);					-- opcode
-		   valor			: out unsigned(7 downto 0);					-- literal que será somado ao valor de um registrador, por exemplo
-		   enderecoA		: out unsigned(3 downto 0);					-- A eh DESTINO
-		   enderecoB		: out unsigned(3 downto 0);					-- B eh FONTE
-		   chosenRegister	: out unsigned(3 downto 0);				
-		   jump_adress 		: out unsigned(7 downto 0);
-		   isAddress		: out std_logic;
-		   branch_delta		: out unsigned(3 downto 0)
+		port (clock_geral	 	: in std_logic;
+			  wr_enable	   		: in std_logic;
+			  reset_geral	 	: in std_logic;
+			  stateMachine2		: in unsigned(1 downto 0);
+			  commandFromROM	: in unsigned(15 downto 0);
+			  jump_enable		: out std_logic;
+			  instrucao			: out unsigned(7 downto 0);					-- opcode
+			  valor				: out unsigned(7 downto 0);					-- literal que será somado ao valor de um registrador, por exemplo
+			  enderecoA			: out unsigned(3 downto 0);					-- A eh DESTINO
+			  enderecoB			: out unsigned(3 downto 0);					-- B eh FONTE
+			  chosenRegister	: out unsigned(3 downto 0);				
+			  jump_adress 		: out unsigned(7 downto 0);
+			  isAddress			: out std_logic;
+			  branch_delta		: out unsigned(3 downto 0)
 	);
 	end component;
 	
@@ -120,26 +119,26 @@ architecture a_processador of processador is
 	);
 	end component;
 	
-	signal valorRegA, valorRegB						: unsigned(7 downto 0);					-- sinais de saída do banco de registrador
-	signal entradaAULA, entradaBULA					: unsigned(7 downto 0);					-- sinais de entrada da ULA
-	signal regA, regB, regEscolhido					: unsigned(3 downto 0);					-- saída da ucontrol, indica o endereço do registrador que precisa ser lido
-	signal regAbanco, regBbanco, escolhidoBanco		: unsigned(3 downto 0);					-- entradas do banco de registradores
-	signal valorLiteral, valorSaidaUCONTROL			: unsigned(7 downto 0);					-- valor a ser armazenado no registrador escolhido, sai da ucontrol
-	signal valorInBanco								: unsigned(7 downto 0);					-- sinal que entra no banco de registradores
-	signal operacaoULA, resultULA, inFromULA		: unsigned(7 downto 0);					-- saída da ucontrol, com base no opcode e a entrada da ucontrol com resultado da ULA
-	signal j_enable, indicaEndereco,Bmaiors			: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
-	signal operacaoUCONTROL							: unsigned(7 downto 0);
-	signal stateMachine3_s, outMaq3					: unsigned(1 downto 0);					-- resultado da máquina de estados de 3 estados
-	signal stateMachine2_s, outMaq2					: unsigned(1 downto 0);
-	signal entradaPC, saidaPC, entradaROM			: unsigned(7 downto 0);	
-	signal comandoUCONTROL							: unsigned(15 downto 0);
-	signal dataROM_s								: unsigned(15 downto 0);				-- informação da ROM
-	signal proxEndereco_s, jumpAddres				: unsigned(7 downto 0);					-- próximo endereço, atualização do PC
-	signal branch_delta								: unsigned(3 downto 0);
-	signal endFinalBranch, end_outULA				: unsigned(7 downto 0);
-	signal ram_enable, ram_en_temp					: std_logic;
-	signal saidaRAM, entradaRAM, enderecoRAM		: unsigned(7 downto 0);
-	signal memParaReg								: unsigned(1 downto 0);						-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
+	signal valorRegA, valorRegB							: unsigned(7 downto 0);					-- sinais de saída do banco de registrador
+	signal entradaAULA, entradaBULA						: unsigned(7 downto 0);					-- sinais de entrada da ULA
+	signal regA, regB, regEscolhido						: unsigned(3 downto 0);					-- saída da ucontrol, indica o endereço do registrador que precisa ser lido
+	signal regAbanco, regBbanco, escolhidoBanco			: unsigned(3 downto 0);					-- entradas do banco de registradores
+	signal valorLiteral, valorSaidaUCONTROL				: unsigned(7 downto 0);					-- valor a ser armazenado no registrador escolhido, sai da ucontrol
+	signal valorInBanco									: unsigned(7 downto 0);					-- sinal que entra no banco de registradores
+	signal operacaoULA, resultULA, inFromULA			: unsigned(7 downto 0);					-- saída da ucontrol, com base no opcode e a entrada da ucontrol com resultado da ULA
+	signal j_enable, indicaEndereco,Bmaiors				: std_logic;							-- saída da ucontrol, indica se o opcode é uma instrução de jump
+	signal operacaoUCONTROL								: unsigned(7 downto 0);
+	signal stateMachine3_s, outMaq3						: unsigned(1 downto 0);					-- resultado da máquina de estados de 3 estados
+	signal stateMachine2_s, outMaq2						: unsigned(1 downto 0);
+	signal entradaPC, saidaPC, entradaROM				: unsigned(7 downto 0);	
+	signal comandoUCONTROL								: unsigned(15 downto 0);
+	signal dataROM_s									: unsigned(15 downto 0);				-- informação da ROM
+	signal proxEndereco_s, jumpAddres					: unsigned(7 downto 0);					-- próximo endereço, atualização do PC
+	signal branch_delta									: unsigned(3 downto 0);
+	signal endFinalBranch, end_outULA					: unsigned(7 downto 0);
+	signal ram_enable, ram_en_temp, pc_en, bancoReg_en, ucontrol_en	: std_logic;
+	signal saidaRAM, entradaRAM, enderecoRAM			: unsigned(7 downto 0);
+	signal memParaReg									: unsigned(1 downto 0);						-- quando memParaReg for 0 o valueR recebe o valor lido no endereço recebido pela RAM, se for 1, recebe a saída da ULA
 	
 	begin
 	
@@ -147,7 +146,7 @@ architecture a_processador of processador is
 								  readRegB => regBbanco,
 								  valueR => valorLiteral,
 								  chosenReg => regEscolhido,
-								  wr_enable => write_en,
+								  wr_enable => bancoReg_en,
 								  clock_geral => clk_geral,
 								  rst_geral => rst_grl,
 								  outRegA => valorRegA,
@@ -164,7 +163,7 @@ architecture a_processador of processador is
 						  dado => dataROM_s);
 	
 	pcObj: pc port map(clock => clk_geral,
-					   write_enable => write_en,
+					   write_enable => pc_en,
 					   reset => rst_grl,
 					   entrada => entradaPC,
 					   saida => saidaPC);
@@ -178,7 +177,7 @@ architecture a_processador of processador is
 										 estado => outMaq2); 
 								  
 	ucontrolObj: ucontrol port map( clock_geral => clk_geral,
-									wr_enable => write_en,
+									wr_enable => ucontrol_en,
 									reset_geral => rst_grl,
 									stateMachine2 => stateMachine2_s,
 									commandFromROM => comandoUCONTROL,
@@ -230,9 +229,7 @@ architecture a_processador of processador is
 	-- VALIDA PARA A INSTRUCAO DE MOV E ADD
 	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else
 					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else 
-					valorRegB when operacaoUCONTROL = "01001110" or operacaoUCONTROL="11010110" else
-					--resultULA when memParaReg = "1" else ??
-					--saidaRAM when memParaReg = "0" else ??
+					valorRegB when operacaoUCONTROL = "01001110" else
 					saidaRAM when operacaoUCONTROL = "11010110" else -- (LOAD) valor a ser armezenado no reg vindo da RAM
 					"00000000";
 					
@@ -251,16 +248,20 @@ architecture a_processador of processador is
 	ram_enable <= '1' when operacaoUCONTROL = "11010111" else 			-- STORE ativa write enable da RAM
 				  '0';
 	
-	--operacaoUCONTROL = "11010110" or
-	
 	entradaRAM <= valorRegB when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado do REGB
 				  "00000000";
 				
-	enderecoRAM <= 	valorRegA when ram_enable = '1' else
-					--valorRegA when operacaoUCONTROL = "11010111" else 	 --REG1	-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA
-				   --"0000" & comandoUCONTROL(7 downto 4) when operacaoUCONTROL = "11010110" else	-- (LOAD) endereço do qual eu quero obter o dado
-				   --valorRegA when operacaoUCONTROL = "11010110" else	--REG2				-- LOAD
+	enderecoRAM <= 	valorRegA when operacaoUCONTROL = "11010111" or operacaoUCONTROL = "11010110" else 
 				   "00000000";
+				   
+	-- CONFIGURACAO WR_EN PC
+	pc_en <= '1';
+	ucontrol_en <='1';
+	
+	
+	-- CONFIGURACAO WR_EN DO BANCO DE REGS
+	bancoReg_en <= '1' when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010110" or operacaoUCONTROL = "11010000" or operacaoUCONTROL = "01011110" or operacaoUCONTROL = "01001110" else
+				   '0';
 	
 	
 	--Adicionando os pinos de saída

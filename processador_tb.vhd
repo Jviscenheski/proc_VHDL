@@ -15,8 +15,7 @@ end entity;
 
 architecture a_processador_tb of processador_tb is
 	component processador
-		port (write_en			: in std_logic;						-- parâmetros necessários
-			  clk_geral			: in std_logic;						-- parâmetros necessários
+		port (clk_geral			: in std_logic;						-- parâmetros necessários
 			  rst_grl			: in std_logic;						-- parâmetros necessários
 			  dataROM			: out unsigned(15 downto 0);			-- instrução que vem da ROM
 			  proxEndereco		: out unsigned(7 downto 0);			-- habilita atualizacao do PC
@@ -56,8 +55,7 @@ architecture a_processador_tb of processador_tb is
 	
 	begin
 	
-	uut: processador port map ( write_en => write_en,
-								clk_geral => clk_geral,
+	uut: processador port map ( clk_geral => clk_geral,
 								rst_grl => rst_grl,
 								dataROM => dataROM,
 								proxEndereco => proxEndereco,
@@ -92,10 +90,8 @@ architecture a_processador_tb of processador_tb is
 	
 	process
 	begin
-		write_en <= '1';
 		rst_grl <= '1';
 		wait for 100 ns;
-		write_en <= '1';
 		rst_grl <= '0';
 		wait;
 	end process;
