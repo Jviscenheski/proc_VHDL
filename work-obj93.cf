@@ -1,7 +1,7 @@
 v 4
-file . "processador_tb.vhd" "9c86c351f92d091aef0fbb2477d0f4ee57e174d3" "20190628001313.691":
-  entity processador_tb at 9( 299) + 0 on 53;
-  architecture a_processador_tb of processador_tb at 16( 414) + 0 on 54;
+file . "processador_tb.vhd" "9c86c351f92d091aef0fbb2477d0f4ee57e174d3" "20190628002744.283":
+  entity processador_tb at 9( 299) + 0 on 57;
+  architecture a_processador_tb of processador_tb at 16( 414) + 0 on 58;
 file . "bancoReg_8.vhd" "a4da41aba709369fd03df04ae6651ac31b45c03b" "20190627230546.320":
   entity bancoreg_8 at 9( 304) + 0 on 33;
   architecture a_bancoreg_8 of bancoreg_8 at 27( 1204) + 0 on 34;
@@ -29,6 +29,6 @@ file . "maquina2estados.vhd" "e6d7d76b9460208e5c2e4d85ad41895162538c45" "2019062
 file . "ram.vhd" "ad7200a5f6aa8be4e8010fbbc06b0c538cc4a56b" "20190627230445.010":
   entity ram at 9( 299) + 0 on 27;
   architecture a_ram of ram at 22( 590) + 0 on 28;
-file . "processador.vhd" "2ffcc6aadc2079f3440b8d855b833ac0408912b1" "20190628001311.614":
-  entity processador at 9( 299) + 0 on 51;
-  architecture a_processador of processador at 41( 1609) + 0 on 52;
+file . "processador.vhd" "2396eb36171775a3b65decf20f20b5c562d01d7d" "20190628002742.968":
+  entity processador at 9( 299) + 0 on 55;
+  architecture a_processador of processador at 41( 1609) + 0 on 56;
