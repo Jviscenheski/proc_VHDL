@@ -252,7 +252,7 @@ architecture a_processador of processador is
 				  "00000000";
 				
 	enderecoRAM <= valorRegA when operacaoUCONTROL = "11010111" else 					-- (STORE) o endereço em que o dado vai ser armazenado é dito pela ULA
-				   "0000" & comandoUCONTROL(3 downto 0) when operacaoUCONTROL = "11010110" else	-- (LOAD) endereço do qual eu quero obter o dado
+				   "0000" & comandoUCONTROL(7 downto 4) when operacaoUCONTROL = "11010110" else	-- (LOAD) endereço do qual eu quero obter o dado
 				   "00000000";
 	
 	
