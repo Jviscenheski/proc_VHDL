@@ -248,8 +248,10 @@ architecture a_processador of processador is
 	regEscolhido <= escolhidoBanco;
 	
 	-- CONFIGURACAO DA RAM
-	ram_enable <= '1' when operacaoUCONTROL = "11010110" or operacaoUCONTROL = "11010111" else 			-- LOAD e STORE ativa write enable da RAM
+	ram_enable <= '1' when operacaoUCONTROL = "11010111" else 			-- STORE ativa write enable da RAM
 				  '0';
+	
+	--operacaoUCONTROL = "11010110" or
 	
 	entradaRAM <= valorRegB when operacaoUCONTROL = "11010111" else 			-- (STORE) o dado a ser armazenado na RAM é o dado do REGB
 				  "00000000";
