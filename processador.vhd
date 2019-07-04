@@ -199,7 +199,7 @@ architecture a_processador of processador is
 							
 	memParaReg <= outMaq2;
 
-	endFinalBranch <= "0000" & (branch_delta + saidaPC(3 downto 0));  	-- somando o descolamento delta com meu endereço atual, tenho o endereço destino do branch
+	endFinalBranch <= ("1111" & branch_delta) + saidaPC(7 downto 0);  	-- somando o descolamento delta com meu endereço atual, tenho o endereço destino do branch
 	
 	-- CONFIGURACAO PC
 	entradaPC <= saidaPC + "00000001" when outMaq2 = "0" and j_enable = '0' and Bmaiors = '0' else			-- so incrementa se nao tiver jump
@@ -227,7 +227,7 @@ architecture a_processador of processador is
 					
 	
 	-- VALIDA PARA A INSTRUCAO DE MOV E ADD
-	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else
+	valorLiteral <= resultULA when operacaoUCONTROL = "11011011" or operacaoUCONTROL = "11010000" else 
 					valorSaidaUCONTROL when operacaoUCONTROL = "01011110" else 
 					valorRegB when operacaoUCONTROL = "01001110" else
 					saidaRAM when operacaoUCONTROL = "11010110" else -- (LOAD) valor a ser armezenado no reg vindo da RAM
